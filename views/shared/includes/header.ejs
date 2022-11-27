@@ -1,4 +1,12 @@
 <header>
   <div><a href="/">MONTRE CONNEXION</a></div>
-  <nav></nav>
+  <nav>
+    <ul>
+      <% if (locals.isAuth) { %>
+      <li>
+        <button>Logout</button>
+      </li>
+      <% } %>
+    </ul>
+  </nav>
 </header>
