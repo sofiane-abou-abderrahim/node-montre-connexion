@@ -73,9 +73,13 @@ main {
   height: calc(100vh - 5rem);
   width: 100%;
   background-color: var(--color-gray-700);
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
+}
+
+#mobile-menu.open {
+  display: flex;
 }
 
 #mobile-menu nav {
@@ -101,10 +105,6 @@ main {
 
   #main-header nav {
     display: block;
-  }
-
-  #logo a {
-    font-size: 2rem;
   }
 
   .nav-items button {
