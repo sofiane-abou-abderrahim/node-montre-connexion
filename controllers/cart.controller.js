@@ -1,6 +1,6 @@
 const Product = require('../models/product.model');
 
-function getCart(req, res) {
+async function getCart(req, res) {
   res.render('customer/cart/cart');
 }
 
@@ -29,7 +29,7 @@ function updateCartItem(req, res) {
 
   const updatedItemData = cart.updateItem(
     req.body.productId,
-    req.body.quantity
+    +req.body.quantity
   );
 
   req.session.cart = cart;
