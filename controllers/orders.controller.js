@@ -1,3 +1,5 @@
+const stripe = require('stripe')('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');
+
 const Order = require('../models/order.model');
 const User = require('../models/user.model');
 
@@ -13,6 +15,8 @@ async function getOrders(req, res) {
 }
 
 async function addOrder(req, res, next) {
+  const cart = res.locals.cart;
+
   let userDocument;
   try {
     userDocument = await User.findById(res.locals.uid);
@@ -31,10 +35,39 @@ async function addOrder(req, res, next) {
 
   req.session.cart = null;
 
-  res.redirect('/orders');
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: cart.items.map(function(item) {
+      return  {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.product.title
+          },
+          unit_amount: +item.product.price.toFixed(2) * 100
+        },
+        quantity: item.quantity,
+      }
+    }),
+    mode: 'payment',
+    success_url: req.protocol + '://' + req.get('host') + '/orders/success',
+    cancel_url: req.protocol + '://' + req.get('host') + '/orders/failure',
+  });
+
+  res.redirect(303, session.url);
+}
+
+function getSuccess(req, res) {
+  res.render('customer/orders/success');
+}
+
+function getFailure(req, res) {
+  res.render('customer/orders/failure');
 }
 
 module.exports = {
   addOrder: addOrder,
   getOrders: getOrders,
+  getSuccess: getSuccess,
+  getFailure: getFailure
 };
